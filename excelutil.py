@@ -19,10 +19,17 @@ def getExcel ():
     df = pd.read_excel (import_file_path,header=None,index=False)
     space=[1,4,2,13,13,30,15,1,35,35,10,1,2,4,2,3,1,8,20,2,1,20,2,1,20,2,1,20,2,1,20,2,1,20,2,1,20,2,1,20,2,1,20,2,1,20,2,1]
     for i in range(1,len(df.columns)):
-        spaces='{:<'+str(space[i])+'}'
-        col=df.iloc[:,i]
-        for j in range(1,len(col)):
-            col[j]=spaces.format(col[j])[:space[i]]
+        field_len='{:<'+str(space[i])+'}'
+        rows=df.iloc[:,i]
+        for j in range(1,len(rows)):
+            if str(rows[0]) == "College's Student ID Number":
+                rows[j] = str(rows[j]).rjust(space[i],' ') # [:space[i]]
+            elif "Telephone Number" in str(rows[0]):
+                rows[j] = field_len.format(str(rows[j]).replace('-',''))[:space[i]]
+            elif "Course #" in str(rows[0]):
+                rows[j] = field_len.format(str(rows[j]))[:space[i]]
+            else:
+                rows[j] = field_len.format(str(rows[j]))[-space[i]:] if space[i]<len(str(rows[j])) else field_len.format(str(rows[j]))[:space[i]]
     df=df.iloc[1:]
     
     txt_file =  os.path.join(os.path.dirname(import_file_path), 'records.txt')
